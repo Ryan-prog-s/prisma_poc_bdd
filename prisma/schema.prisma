@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["views"]
 }
 
 datasource db {
@@ -208,8 +209,296 @@ model Territories {
   Region               Region                @relation(fields: [RegionID], references: [RegionID], onUpdate: NoAction, map: "FK_Territories_Region")
 }
 
-model category {
-  CategoryId   Int    @id(map: "PK_e8eb0edb6b84d0a0b0cbfad326a") @default(autoincrement())
-  CategoryName String @db.NVarChar(255)
-  Description  String @db.NVarChar(255)
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view MaxProductsByRegion {
+  RegionID          Int
+  RegionDescription String @db.NChar(50)
+  ProductID         Int
+  ProductName       String @db.NVarChar(40)
+  Qte               Int?
+
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view ViewCat {
+  CategoryID   Int     @default(autoincrement())
+  CategoryName String  @db.NVarChar(15)
+  Description  String? @db.NText
+
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view Customer_and_Suppliers_by_City {
+  City         String? @db.NVarChar(15)
+  CompanyName  String  @db.NVarChar(40)
+  ContactName  String? @db.NVarChar(30)
+  Relationship String  @db.VarChar(9)
+
+  @@map("Customer and Suppliers by City")
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view Alphabetical_list_of_products {
+  ProductID       Int
+  ProductName     String  @db.NVarChar(40)
+  SupplierID      Int?
+  CategoryID      Int?
+  QuantityPerUnit String? @db.NVarChar(20)
+  UnitPrice       Float?  @db.Money
+  UnitsInStock    Int?    @db.SmallInt
+  UnitsOnOrder    Int?    @db.SmallInt
+  ReorderLevel    Int?    @db.SmallInt
+  Discontinued    Boolean
+  CategoryName    String  @db.NVarChar(15)
+
+  @@map("Alphabetical list of products")
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view Current_Product_List {
+  ProductID   Int    @default(autoincrement())
+  ProductName String @db.NVarChar(40)
+
+  @@map("Current Product List")
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view Orders_Qry {
+  OrderID        Int
+  CustomerID     String?   @db.NChar(5)
+  EmployeeID     Int?
+  OrderDate      DateTime? @db.DateTime
+  RequiredDate   DateTime? @db.DateTime
+  ShippedDate    DateTime? @db.DateTime
+  ShipVia        Int?
+  Freight        Float?    @db.Money
+  ShipName       String?   @db.NVarChar(40)
+  ShipAddress    String?   @db.NVarChar(60)
+  ShipCity       String?   @db.NVarChar(15)
+  ShipRegion     String?   @db.NVarChar(15)
+  ShipPostalCode String?   @db.NVarChar(10)
+  ShipCountry    String?   @db.NVarChar(15)
+  CompanyName    String    @db.NVarChar(40)
+  Address        String?   @db.NVarChar(60)
+  City           String?   @db.NVarChar(15)
+  Region         String?   @db.NVarChar(15)
+  PostalCode     String?   @db.NVarChar(10)
+  Country        String?   @db.NVarChar(15)
+
+  @@map("Orders Qry")
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view Products_Above_Average_Price {
+  ProductName String @db.NVarChar(40)
+  UnitPrice   Float? @db.Money
+
+  @@map("Products Above Average Price")
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view Products_by_Category {
+  id Int @unique
+  CategoryName    String  @db.NVarChar(15)
+  ProductName     String  @db.NVarChar(40)
+  QuantityPerUnit String? @db.NVarChar(20)
+  UnitsInStock    Int?    @db.SmallInt
+  Discontinued    Boolean
+
+  @@map("Products by Category")
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view Quarterly_Orders {
+  CustomerID  String? @db.NChar(5)
+  CompanyName String? @db.NVarChar(40)
+  City        String? @db.NVarChar(15)
+  Country     String? @db.NVarChar(15)
+
+  @@map("Quarterly Orders")
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view Invoices {
+  ShipName       String?   @db.NVarChar(40)
+  ShipAddress    String?   @db.NVarChar(60)
+  ShipCity       String?   @db.NVarChar(15)
+  ShipRegion     String?   @db.NVarChar(15)
+  ShipPostalCode String?   @db.NVarChar(10)
+  ShipCountry    String?   @db.NVarChar(15)
+  CustomerID     String?   @db.NChar(5)
+  CustomerName   String    @db.NVarChar(40)
+  Address        String?   @db.NVarChar(60)
+  City           String?   @db.NVarChar(15)
+  Region         String?   @db.NVarChar(15)
+  PostalCode     String?   @db.NVarChar(10)
+  Country        String?   @db.NVarChar(15)
+  Salesperson    String    @db.NVarChar(31)
+  OrderID        Int
+  OrderDate      DateTime? @db.DateTime
+  RequiredDate   DateTime? @db.DateTime
+  ShippedDate    DateTime? @db.DateTime
+  ShipperName    String    @db.NVarChar(40)
+  ProductID      Int
+  ProductName    String    @db.NVarChar(40)
+  UnitPrice      Float     @db.Money
+  Quantity       Int       @db.SmallInt
+  Discount       Float     @db.Real
+  ExtendedPrice  Float?    @db.Money
+  Freight        Float?    @db.Money
+
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view Order_Details_Extended {
+  OrderID       Int
+  ProductID     Int
+  ProductName   String @db.NVarChar(40)
+  UnitPrice     Float  @db.Money
+  Quantity      Int    @db.SmallInt
+  Discount      Float  @db.Real
+  ExtendedPrice Float? @db.Money
+
+  @@map("Order Details Extended")
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view Order_Subtotals {
+  OrderID  Int
+  Subtotal Float? @db.Money
+
+  @@map("Order Subtotals")
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view Product_Sales_for_1997 {
+  CategoryName String @db.NVarChar(15)
+  ProductName  String @db.NVarChar(40)
+  ProductSales Float? @db.Money
+
+  @@map("Product Sales for 1997")
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view Category_Sales_for_1997 {
+  CategoryName  String @db.NVarChar(15)
+  CategorySales Float? @db.Money
+
+  @@map("Category Sales for 1997")
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view Sales_by_Category {
+  CategoryID   Int
+  CategoryName String @db.NVarChar(15)
+  ProductName  String @db.NVarChar(40)
+  ProductSales Float? @db.Money
+
+  @@map("Sales by Category")
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view Sales_Totals_by_Amount {
+  SaleAmount  Float?    @db.Money
+  OrderID     Int
+  CompanyName String    @db.NVarChar(40)
+  ShippedDate DateTime? @db.DateTime
+
+  @@map("Sales Totals by Amount")
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view Summary_of_Sales_by_Quarter {
+  ShippedDate DateTime? @db.DateTime
+  OrderID     Int
+  Subtotal    Float?    @db.Money
+
+  @@map("Summary of Sales by Quarter")
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view Summary_of_Sales_by_Year {
+  ShippedDate DateTime? @db.DateTime
+  OrderID     Int
+  Subtotal    Float?    @db.Money
+
+  @@map("Summary of Sales by Year")
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view ViewCAByProducts {
+  ProductID       Int
+  ProductName     String  @db.VarChar(50)
+  SupplierID      Int?
+  CategoryID      Int?
+  QuantityPerUnit String? @db.VarChar(50)
+  UnitPrice       Float?  @db.Money
+  UnitsInStock    Int?    @db.SmallInt
+  UnitsOnOrder    Int?    @db.SmallInt
+  ReorderLevel    Int?    @db.SmallInt
+  Discontinued    Boolean
+  Qte             Int?
+  CA              Float?
+  AvgPrice        Float?
+
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view ProductNotOrdered {
+  ProductName String @db.VarChar(50)
+  ProductID   Int
+
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view CustomersWithoutOrder {
+  CustomerID   String  @db.Char(10)
+  Address      String? @db.VarChar(60)
+  City         String? @db.VarChar(50)
+  CompanyName  String  @db.VarChar(50)
+  ContactName  String? @db.VarChar(50)
+  ContactTitle String? @db.VarChar(50)
+  Country      String? @db.VarChar(50)
+  Fax          String? @db.VarChar(50)
+  Phone        String? @db.VarChar(50)
+  PostalCode   String? @db.VarChar(50)
+  Region       String? @db.VarChar(50)
+
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view ViewClientSansCommande {
+  CustomerID   String  @db.Char(10)
+  CompanyName  String  @db.VarChar(50)
+  ContactName  String? @db.VarChar(50)
+  ContactTitle String? @db.VarChar(50)
+  Address      String? @db.VarChar(60)
+  City         String? @db.VarChar(50)
+  Region       String? @db.VarChar(50)
+  PostalCode   String? @db.VarChar(50)
+  Country      String? @db.VarChar(50)
+  Phone        String? @db.VarChar(50)
+  Fax          String? @db.VarChar(50)
+
+  @@ignore
 }
